@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Dijkstra — Pencarian Rute SPBU | UMRAH 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <div class="badge">PAA · INF11111 · UMRAH 2026</div>
+        <h1>Analisis Algoritma Dijkstra<br>
+            Sistem Pencarian <span class="accent">Rute SPBU Terdekat</span></h1>
+        <p class="subtitle">Dijkstra + Min-Heap &nbsp;·&nbsp; Bresenham Line &nbsp;·&nbsp; Midpoint Circle &nbsp;·&nbsp; Peta Tanjungpinang</p>
+    </header>
+
+    <div id="statusBar" class="status-bar">Siap</div>
+
+    <div class="main">
+        <aside class="sidebar">
+            <div class="card">
+                <div class="card-title">🚩 Lokasi Awal</div>
+                <select id="startNode"></select>
+                <button id="btnRandomSrc" class="btn btn-secondary">🎲 Acak Lokasi Awal</button>
+                <p class="note">🚩 Kuning = Source &nbsp;·&nbsp; 🏁 Merah = Destination</p>
+            </div>
+            <div class="card">
+                <div class="card-title">🗺️ Peta</div>
+                <button id="btnRandomMap" class="btn btn-secondary">🔀 Acak Posisi Node</button>
+                <p class="note">Saat diacak, posisi dan bobot diperbarui proporsional terhadap jarak antar node.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">⚡ Kecepatan Scan</div>
+                <div class="slider-row">
+                    <span class="muted">Cepat</span>
+                    <input type="range" id="speedSlider" min="100" max="2000" value="700" step="100">
+                    <span class="muted">Lambat</span>
+                </div>
+                <div class="speed-label">Delay: <span id="speedLabel">700 ms</span>/langkah</div>
+            </div>
+            <div class="card">
+                <div class="card-title">▶️ Simulasi</div>
+                <button id="btnStart" class="btn btn-primary">🚀 Mulai Simulasi</button>
+                <p class="note" style="text-align:center">Fase 1: Scan → Fase 2: Jalur → Fase 3: Jalan</p>
+            </div>
+            <div class="card">
+                <div class="card-title">📌 Legenda Node</div>
+                <div class="leg"><span class="dot" style="background:#FFD700;border:2px solid #7a5e00"></span>Lokasi Awal 🚩</div>
+                <div class="leg"><span class="dot" style="background:#FF2020;border:2px solid #7f0000"></span>SPBU Tujuan 🏁</div>
+                <div class="leg"><span class="dot" style="background:#ffb347;border:2px solid #8a4000"></span>SPBU Lainnya ⛽</div>
+                <div class="leg"><span class="dot" style="background:#9b59b6;border:2px solid #4a2080"></span>Di-settle Dijkstra ✓</div>
+                <div class="leg"><span class="dot" style="background:#3498db;border:2px solid #1a4f80"></span>Sedang di-relaksasi</div>
+                <div class="leg"><span class="dot" style="background:#2ecc71;border:2px solid #1a6b38"></span>Pada Jalur Terpendek</div>
+                <div class="leg"><span class="dot" style="background:#27ae60;border:2px solid #1a5c38"></span>Kampus UMRAH</div>
+                <div class="leg"><span class="dot" style="background:#2980b9;border:2px solid #1a4f80"></span>Kota Tanjungpinang</div>
+                <div class="leg"><span class="dot" style="background:#e67e22;border:2px solid #7a3e00"></span>Kawasan Batu 5–8</div>
+                <div class="card-title" style="margin-top:6px">📌 Legenda Jalan</div>
+                <div class="leg"><span class="line" style="background:#e03030"></span>Jalur Terpendek</div>
+                <div class="leg"><span class="line" style="background:#9aaab8"></span>Jalan Raya</div>
+                <div class="leg"><span class="line" style="background:#c2ceda"></span>Jalan Lokal</div>
+            </div>
+            <div class="card">
+                <div class="card-title">📊 Kompleksitas</div>
+                <table class="ctable">
+                    <tr><td colspan="2" class="cthead">Dijkstra + Min-Heap</td></tr>
+                    <tr><td>Waktu</td><td><code>O((V+E) log V)</code></td></tr>
+                    <tr><td>Ruang</td><td><code>O(V + E)</code></td></tr>
+                    <tr><td colspan="2" class="cthead">Graf Aktif</td></tr>
+                    <tr><td>Simpul (V)</td><td><code id="statV">–</code></td></tr>
+                    <tr><td>Sisi (E)</td><td><code id="statE">–</code></td></tr>
+                    <tr><td colspan="2" class="cthead">Grafika</td></tr>
+                    <tr><td>Jalan</td><td><code>Bresenham</code></td></tr>
+                    <tr><td>Node</td><td><code>Midpoint Circle</code></td></tr>
+                </table>
+            </div>
+        </aside>
+
+        <div class="right-col">
+            <canvas id="mapCanvas" width="1100" height="680"></canvas>
+            <div class="card">
+                <div class="card-title">🔍 Log Langkah Dijkstra — Fase 1: Scanning</div>
+                <div id="scanInfo" class="scan-info">
+                    <em>Tekan <b>Mulai Simulasi</b> untuk menjalankan visualisasi Dijkstra.</em>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📋 Hasil Pencarian</div>
+                <div id="result" class="result"><em>Belum ada hasil.</em></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">© Project Design and Analysis of Algorithm Course 2026 &nbsp;·&nbsp; Universitas Maritim Raja Ali Haji</footer>
+</div>
+
+<script src="js/bresenham.js"></script>
+<script src="js/midpoint.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/edge-routing.js"></script>
+<script src="js/data.js"></script>
+<script src="js/dijkstra.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
