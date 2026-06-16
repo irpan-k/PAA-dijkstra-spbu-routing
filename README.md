@@ -6,6 +6,6 @@ Sistem ini memvisualisasikan pencarian jalur terpendek dari satu titik spasial k
 
 Anggota Kelompok:
 1. Januar Suyasmin Saputra (2401020046)
-2. Jova Rivana (2401020050)
+2. Jova Rifana (2401020050)
 3. Irfan Kurniawan (2401020055)
 4. M. Afdhal Habibi (2401020083)
